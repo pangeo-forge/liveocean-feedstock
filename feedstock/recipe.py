@@ -26,7 +26,7 @@ transforms = (
     # Create a beam PCollection from our input file pattern
     beam.Create(pattern.items())
     # Open with Kerchunk and create references for each file
-    storage_options = {'anon':True, 'endpoint_url: 'https://mghp.osn.xsede.org'}
+    storage_options = {'anon':True, 'endpoint_url': 'https://mghp.osn.xsede.org'}
     | OpenWithKerchunk(file_type=pattern.file_type, storage_options={'anon':True})
     # Use Kerchunk's `MultiZarrToZarr` functionality to combine the reference files into a single
     # reference file. *Note*: Setting the correct contact_dims and identical_dims is important.
