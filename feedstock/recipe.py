@@ -20,3 +20,24 @@ recipe = HDFReferenceRecipe(
     },
     identical_dims=['lat_psi', 'lat_rho', 'lat_u', 'lat_v', 'lon_psi', 'lon_rho', 'lon_u', 'lon_v'],
 )
+
+
+import apache_beam as beam
+from pangeo_forge_recipes.transforms import OpenWithKerchunk, CombineReferences, WriteCombinedReference
+
+store_name = "cmip6_reference"
+transforms = (
+    # Create a beam PCollection from our input file pattern
+    beam.Create(pattern.items())
+    # Open with Kerchunk and create references for each file
+    | OpenWithKerchunk(file_type=pattern.file_type, storage_options={'anon':True})
+    # Use Kerchunk's `MultiZarrToZarr` functionality to combine the reference files into a single
+    # reference file. *Note*: Setting the correct contact_dims and identical_dims is important.
+    | CombineReferences(
+        concat_dims=["time"], 
+        identical_dims=["lat", "lat_bnds", "lon", "lon_bnds", "lev_bnds", "lev"],
+        mzz_kwargs = {"remote_protocol": "s3"},
+    )
+    # Write the combined Kerchunk reference to file.
+    | WriteCombinedReference(target_root=target_root, store_name=store_name)
+)
