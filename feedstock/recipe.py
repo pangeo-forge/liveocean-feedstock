@@ -21,13 +21,13 @@ import apache_beam as beam
 from pangeo_forge_recipes.transforms import OpenWithKerchunk, CombineReferences, WriteCombinedReference
 
 store_name = "liveocean_reference"
+storage_options = {'anon':True, 'endpoint_url': 'https://mghp.osn.xsede.org'}
 
 transforms = (
     # Create a beam PCollection from our input file pattern
     beam.Create(pattern.items())
     # Open with Kerchunk and create references for each file
-    storage_options = {'anon':True, 'endpoint_url': 'https://mghp.osn.xsede.org'}
-    | OpenWithKerchunk(file_type=pattern.file_type, storage_options={'anon':True})
+    | OpenWithKerchunk(file_type=pattern.file_type, storage_options=storage_options)
     # Use Kerchunk's `MultiZarrToZarr` functionality to combine the reference files into a single
     # reference file. *Note*: Setting the correct contact_dims and identical_dims is important.
     | CombineReferences(
