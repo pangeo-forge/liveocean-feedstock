@@ -23,7 +23,7 @@ from pangeo_forge_recipes.transforms import OpenWithKerchunk, CombineReferences,
 store_name = "liveocean_reference"
 storage_options = {'anon':True, 'endpoint_url': 'https://mghp.osn.xsede.org'}
 
-transforms = (
+recipe = (
     # Create a beam PCollection from our input file pattern
     beam.Create(pattern.items())
     # Open with Kerchunk and create references for each file
